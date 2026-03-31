@@ -325,26 +325,6 @@ h1 {
   color: #555;
 }
 
-/* Buttons */
-.btn {
-  padding: 6px 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.15s;
-}
-
-.btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.btn:hover:not(:disabled) {
-  background: #f0f0f0;
-}
-
 /* States */
 .state-msg {
   padding: 40px;

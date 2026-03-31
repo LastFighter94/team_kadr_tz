@@ -174,32 +174,4 @@ export default {
   margin-top: 20px;
 }
 
-.btn {
-  padding: 6px 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.15s;
-}
-
-.btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.btn:hover:not(:disabled) {
-  background: #f0f0f0;
-}
-
-.btn-primary {
-  background: #1976d2;
-  color: #fff;
-  border-color: #1976d2;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #1565c0;
-}
 </style>
