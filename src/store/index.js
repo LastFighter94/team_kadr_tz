@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
+import { getApplications, putApplication } from '@/api/applications'
 
 Vue.use(Vuex)
 
@@ -43,7 +43,7 @@ export default new Vuex.Store({
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
       try {
-        const response = await axios.get('http://localhost:3000/applications', { params })
+        const response = await getApplications(params)
         commit('SET_APPLICATIONS', response.data)
         commit('SET_TOTAL', parseInt(response.headers['x-total-count'] || 0))
       } catch {
@@ -54,10 +54,7 @@ export default new Vuex.Store({
     },
 
     async updateApplication({ commit }, application) {
-      const { data } = await axios.put(
-        `http://localhost:3000/applications/${application.id}`,
-        application
-      )
+      const { data } = await putApplication(application.id, application)
       commit('UPDATE_APPLICATION', data)
     },
   },
