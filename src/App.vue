@@ -103,68 +103,54 @@ export default {
   },
 
   computed: {
-    ...mapState(['applications', 'loading', 'error']),
-
-    filteredItems() {
-      let result = this.applications
-
-      if (this.debouncedSearch) {
-        const q = this.debouncedSearch.toLowerCase()
-        result = result.filter(
-          (a) => a.name.toLowerCase().includes(q) || a.city.toLowerCase().includes(q)
-        )
-      }
-
-      if (this.statusFilter) {
-        result = result.filter((a) => a.status === this.statusFilter)
-      }
-
-      return result
-    },
-
-    sortedItems() {
-      return [...this.filteredItems].sort((a, b) => {
-        let valA = a[this.sortBy]
-        let valB = b[this.sortBy]
-
-        if (this.sortBy === 'created_at') {
-          valA = new Date(valA)
-          valB = new Date(valB)
-        } else {
-          valA = valA.toLowerCase()
-          valB = valB.toLowerCase()
-        }
-
-        if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1
-        if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1
-        return 0
-      })
-    },
+    ...mapState(['applications', 'total', 'loading', 'error']),
 
     paginatedItems() {
-      const start = (this.page - 1) * this.pageSize
-      return this.sortedItems.slice(start, start + this.pageSize)
+      return this.applications
     },
 
     totalPages() {
-      return Math.max(1, Math.ceil(this.filteredItems.length / this.pageSize))
+      return Math.max(1, Math.ceil(this.total / this.pageSize))
     },
   },
 
   watch: {
     statusFilter() {
       this.page = 1
+      this.loadData()
+    },
+    async sortBy() {
+      await this.loadData()
+    },
+    async sortOrder() {
+      await this.loadData()
+    },
+    async page() {
+      await this.loadData()
     },
   },
 
   methods: {
     ...mapActions(['fetchApplications', 'updateApplication']),
 
+    async loadData() {
+      const params = {
+        _page: this.page,
+        _limit: this.pageSize,
+        _sort: this.sortBy,
+        _order: this.sortOrder,
+      }
+      if (this.debouncedSearch) params.q = this.debouncedSearch
+      if (this.statusFilter) params.status = this.statusFilter
+      await this.fetchApplications(params)
+    },
+
     onSearchInput() {
       clearTimeout(this.debounceTimer)
       this.debounceTimer = setTimeout(() => {
         this.debouncedSearch = this.searchQuery
         this.page = 1
+        this.loadData()
       }, 400)
     },
 
@@ -217,7 +203,7 @@ export default {
   },
 
   async created() {
-    await this.fetchApplications()
+    await this.loadData()
   },
 }
 </script>

@@ -7,17 +7,22 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     applications: [],
+    total: 0,
     loading: false,
     error: null,
   },
 
   getters: {
     applications: (state) => state.applications,
+    total: (state) => state.total,
   },
 
   mutations: {
     SET_APPLICATIONS(state, applications) {
       state.applications = applications
+    },
+    SET_TOTAL(state, total) {
+      state.total = total
     },
     SET_LOADING(state, value) {
       state.loading = value
@@ -34,12 +39,13 @@ export default new Vuex.Store({
   },
 
   actions: {
-    async fetchApplications({ commit }) {
+    async fetchApplications({ commit }, params = {}) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
       try {
-        const { data } = await axios.get('http://localhost:3000/applications')
-        commit('SET_APPLICATIONS', data)
+        const response = await axios.get('http://localhost:3000/applications', { params })
+        commit('SET_APPLICATIONS', response.data)
+        commit('SET_TOTAL', parseInt(response.headers['x-total-count'] || 0))
       } catch {
         commit('SET_ERROR', 'Не удалось загрузить данные. Убедитесь, что json-server запущен.')
       } finally {
